@@ -8,8 +8,25 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 const DisplayBlogs = ({ blogList }) => {
+  const router = useRouter();
+  // Delete a blog by it's id
+  const handleBlogDelete = async (getCurrentId) => {
+    try {
+      const apiResponse = await fetch(`/api/delete-blog?id=${getCurrentId}`, {
+        method: "DELETE",
+      });
+      const result = await apiResponse.json();
+      if (result?.success) {
+        router.refresh();
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-5">
       {blogList && blogList.length > 0 ? (
@@ -29,7 +46,10 @@ const DisplayBlogs = ({ blogList }) => {
                 <Button className="bg-blue-500 hover:bg-blue-600 text-white">
                   Edit
                 </Button>
-                <Button className="bg-red-500 hover:bg-red-600 text-white">
+                <Button
+                  onClick={() => handleBlogDelete(blog._id)}
+                  className="bg-red-500 hover:bg-red-600 text-white"
+                >
                   Delete
                 </Button>
               </div>
