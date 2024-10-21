@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import {
   Card,
   CardContent,
@@ -9,8 +9,13 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { Label } from "@/components/ui/label";
+import { BlogContext } from "@/context/BlogContext";
 
-const DisplayBlogs = ({ blogList }) => {
+const DisplayBlogs = ({ blogList, setBlogFormData, setOpenBlogDialog }) => {
+  // const [currentBlogId, setCurrentBlogId] = useState(null);
+  const { currentBlogId, setCurrentBlogId } = useContext(BlogContext);
+
   const router = useRouter();
   // Delete a blog by it's id
   const handleBlogDelete = async (getCurrentId) => {
@@ -22,6 +27,22 @@ const DisplayBlogs = ({ blogList }) => {
       if (result?.success) {
         router.refresh();
       }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  // Edit a blog by it's id
+  const handleBlogEdit = async (getCurrentBlog) => {
+    try {
+      setCurrentBlogId(getCurrentBlog?._id);
+      setBlogFormData({
+        title: getCurrentBlog?.title,
+        description: getCurrentBlog?.description,
+      });
+      setOpenBlogDialog(true);
+
+      console.log(currentBlogId);
     } catch (e) {
       console.log(e);
     }
@@ -43,7 +64,10 @@ const DisplayBlogs = ({ blogList }) => {
                 {blog?.description}
               </CardDescription>
               <div className="mt-5 flex gap-3">
-                <Button className="bg-blue-500 hover:bg-blue-600 text-white">
+                <Button
+                  onClick={() => handleBlogEdit(blog)}
+                  className="bg-blue-500 hover:bg-blue-600 text-white"
+                >
                   Edit
                 </Button>
                 <Button
@@ -57,9 +81,9 @@ const DisplayBlogs = ({ blogList }) => {
           </Card>
         ))
       ) : (
-        <p className="text-center text-gray-500 text-lg">
-          There are no blogs to display
-        </p>
+        <Label className="text-3xl font-extrabold">
+          No Blog found! Please add one
+        </Label>
       )}
     </div>
   );

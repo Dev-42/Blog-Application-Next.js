@@ -1,4 +1,5 @@
 import BlogOverview from "@/components/blog-overveiw";
+import { BlogProvider } from "@/context/BlogContext";
 import React from "react";
 
 async function fetchBlogs() {
@@ -19,7 +20,9 @@ const Blogs = async () => {
   console.log(blogList);
   return (
     <div>
-      <BlogOverview blogList={blogList} />
+      <BlogProvider>
+        <BlogOverview blogList={blogList} />
+      </BlogProvider>
     </div>
   );
 };
